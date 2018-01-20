@@ -22,6 +22,20 @@ const authenticate = (req, res, next) => {
 
 const encryptUserPW = (req, res, next) => {
   const { username, password } = req.body;
+  if (!password) {
+    sendUserError('Give me a password', res);
+    return;
+  }
+  bcrypt
+  .hash(password, BCRYPT_COST)
+  .then((pw) => {
+    req.password = pw;
+    next();
+  })
+  .catch((err) => {
+    throw new Error(err);
+  })
+  
   // https://github.com/kelektiv/node.bcrypt.js#usage
   // TODO: Fill this middleware in with the Proper password encrypting, bcrypt.hash()
   // Once the password is encrypted using bcrypt you'll need to set a user obj on req.user with the encrypted PW
